@@ -1,0 +1,45 @@
+# Config file to run PoseidonMRV.jl
+
+# Model choice
+model: "CrankNicholson1D"
+
+# Oceanographic Properties
+ocn_props:
+  vertical_diffusivity_ML: 1e-6 # [m^2/s]
+  temperature: 15 # [C]
+  salinity: 35 # [psu]
+
+# Vertical Grid
+depth_grid:
+  max_depth: 10.0
+  dz: 0.1 # adaptive grid for CN not yet implemented
+
+# Timstepping (for CrankNicholson use)
+# consider the CN stability criterion when setting timestep: 
+# dt_max = dz^2 / (2 * max_vertical_diffusivity)
+timestepping:
+  timestep: 1800 # use integer
+  sim_duration_days: 1.0 # use float 
+  save_interval_hours: 1 # use integer
+
+# Perturbation Properties
+pert_props:
+  dilution: 100         # dilution factor [1]
+  perturbed_layer_thickness: 1.0  # [m]
+
+# CO2SYS Parameters
+co2sys_params:
+  total_silicate: 5       # (umol/kgSW) from WOCE: https://www.nodc.noaa.gov/cgi-bin/OC5/WOA09F/woa09f.pl - show less than 10 mmol/m³ in most of the ocean
+  total_phosphate: 0.5    # (umol/kgSW) from WOCE: https://www.nodc.noaa.gov/cgi-bin/OC5/WOA09F/woa09f.pl
+  total_ammonia: 0        # (umol/kgSW) ammonium - https://www.researchgate.net/figure/Seasonal-mean-surface-seawater-concentration-of-total-ammonium-NHxsw-simulated-by_fig2_346365160
+  total_sulfide: 0        # (umol/kgSW) usually small at the surface - https://www.researchgate.net/figure/Hydrogen-Sulphide-concentrations-in-the-Black-Sea_fig2_320416797
+  opt_pH_scale: 1         # 1 = Total pH scale, 2 = Seawater scale
+  opt_k_carbonic: 10      # Constants from Leuker et al (2000) K1K2
+  opt_k_bisulfate: 1      # Constants from Dickson (1990) KSO4
+  opt_k_fluoride: 2       # Constants from Perez & Fraga (1987) KF
+  opt_total_borate: 2     # Lee et al (2010) TB
+
+# # Atmospheric Data
+# pH20: 0.0227
+# pAir: 1
+# xCO2atm: 535
