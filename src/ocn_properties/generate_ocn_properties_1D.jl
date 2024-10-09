@@ -12,7 +12,7 @@ Generates the oceanographic properties required for the simulation.
 # Returns
 - `OceanographicProperties`: Struct containing temperature, salinity, vertical diffusivity, and pressure profiles.
 """
-function generate_ocn_properties_1D(ocn_props::Dict{Any, Any}, z::Vector{Float64}, nt::Int)::OcnProperties1D
+function generate_ocn_properties_1D(ocn_props::Dict{Any, Any}, z::Vector{Float64}, nt::Int64)::OcnProperties1D
     temperature = ocn_props["temperature"]
     salinity = ocn_props["salinity"]
     

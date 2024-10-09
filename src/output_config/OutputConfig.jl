@@ -2,10 +2,10 @@
 module OutputConfig
 
 struct OutputConfigCN1D
-    save_interval_hours::Int
+    save_interval_hours::Float64
     save_interval_seconds::Float64
-    TI::UnitRange{Int}
-    NT::Int
+    TI::StepRange{Int64, Int64}
+    NT::Int64
 end
 
 # Include each function from the grids directory relative to Grids.jl's directory

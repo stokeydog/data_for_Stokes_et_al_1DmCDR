@@ -3,9 +3,9 @@
 module TimeStepping
 
 struct TimeStepInfo
-    dt::Float64
-    Tend::Float64
-    nt::Int
+    dt::Int64
+    Tend::Int64
+    nt::Int64
     ti::Vector{Float64}
     sim_duration_days::Float64
 end

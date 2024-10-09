@@ -20,6 +20,7 @@ Pkg.add([
     "CSV",              # for data I/O
     "DataFrames",       # for data I/O
     "Makie",            # for visualization
+    "CairoMakie"        # for visualization
     "JSON",             # Manage configuration files.
     "TOML",             # Manage configuration files.
     "YAML",             # Manage configuration files.

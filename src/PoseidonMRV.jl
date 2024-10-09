@@ -1,12 +1,38 @@
 # src/PoseidonMRV.jl
 module PoseidonMRV
+using PyCall
 
+########################
+### ~ PYTHON CALLS ~ ###
+# First, set the Python environment to the pyseidon virtual environment
+ENV["PYTHON"] = joinpath(@__DIR__, "../python/pyseidon/Scripts/python.exe")
+
+# Check if PyCall needs to rebuild after changing the Python environment
+if !isfile(ENV["PYTHON"])
+    error("The specified Python executable does not exist: $(ENV["PYTHON"])")
+end
+
+# Force a rebuild of PyCall if the Python environment changes
+if PyCall.python != ENV["PYTHON"]
+    println("Rebuilding PyCall to use the specified Python environment...")
+    using Pkg
+    Pkg.build("PyCall")
+end
+
+# Now you can safely use PyCall
+using PyCall
+println("Using Python executable: ", PyCall.python)
+
+#############################
 ### ~ HIERARCHY MATTERS ~ ###
 println("Starting submodule uploads...")
 
 # Base-level modules:
+include("co2sys/CO2SYS.jl")
+using .CO2SYS
+println("CO2SYS uploaded successfully")
+
 include("utils/Utils.jl")
-println("Utils.jl include statement success")
 using .Utils
 println("Utils uploaded successfully")
 
@@ -57,6 +83,7 @@ export Visualize
 export Utils
 export OcnProperties
 export AtmProperties
+export CO2SYS
 
 end # module
 

@@ -17,27 +17,38 @@ using GibbsSeaWater
 using YAML
 using ProgressMeter
 
-# local dependencies (relative paths)
-using .Utils # NEED TO ACCESS .Utils DIRECTLY
-# using ..grids.Grids
-# using ..timestepping.TimeStepping
-# using ..initial_conditions.InitialConditions
-# using ..output_config.OutputConfig
-# using ..ocn_properties.OcnProperties
-# using ..atm_properties.AtmProperties
+# local dependencies
+using PoseidonMRV.Utils 
+using PoseidonMRV.Grids
+using PoseidonMRV.TimeStepping
+using PoseidonMRV.InitialConditions
+using PoseidonMRV.OutputConfig
+using PoseidonMRV.OcnProperties
+using PoseidonMRV.AtmProperties
+using PoseidonMRV.CO2SYS
 
-# Import the Python CO2SYS wrapper
-co2sys_module = pyimport("julia_wrappers.co2sys_wrapper")
+# # Import the Python CO2SYS wrapper
+# co2sys_module = pyimport("julia_wrappers.co2sys_wrapper")
+# # Check if import was successful
+# if co2sys_module === nothing
+#     error("Failed to import julia_wrappers.co2sys_wrapper")
+# end
+# # Check if 'co2sys' attribute exists
+# if hasproperty(co2sys_module, :co2sys)
+#     println("'co2sys' function exists in the module.")
+# else
+#     error("'co2sys' function does not exist in julia_wrappers.co2sys_wrapper.")
+# end
 
 function timestep!(
-    initial_conditions::InitialConditions,
-    grid::Grids.Grid,
-    time_steps::TimeStepping.TimeStepping,
-    output_config::OutputConfig.OutputConfig,
+    initial_conditions::InitialConditions.InitialConditions1D,
+    grid::Grids.GridCN1D,
+    time_steps::TimeStepping.TimeStepInfo,
+    output_config::OutputConfig.OutputConfigCN1D,
     ocn_props::OcnProperties.OcnProperties1D,
     atm_props::AtmProperties.AtmProperties1D,
-    pert_props::Dict{String, Any},
-    co2sys_params::Dict{String, Any}
+    pert_props::Dict{Any, Any},
+    co2sys_params::Dict{Any, Any}
 )::Tuple{
     Matrix{Float64}, Matrix{Float64}, Matrix{Float64},
     Matrix{Float64}, Vector{Float64}, Vector{Float64},
@@ -58,21 +69,24 @@ function timestep!(
     T = ocn_props.T
     S = ocn_props.S
     kap = ocn_props.vertical_diffusivity
-    pCO2_air = atmospheric_props.pCO2_air
-    u_10 = atmospheric_props.u_10
+    P = ocn_props.P
+    pCO2_air = atm_props.pCO2_air
+    u_10 = atm_props.u_10
 
     # Preallocate output matrices
-    ALK = fill(NaN, nz, NT+1)
-    DIC = fill(NaN, nz, NT+1)
-    pH = fill(NaN, nz, NT+1)
-    pCO2 = fill(NaN, nz, NT+1)
-    ΔpCO2 = fill(NaN, NT+1)
+    ALK = fill(NaN, nz, NT)
+    DIC = fill(NaN, nz, NT)
+    pH = fill(NaN, nz, NT)
+    pCO2 = fill(NaN, nz, NT)
+    ΔpCO2 = fill(NaN, NT)
     F = fill(NaN, nt - 1)
     tiF = (ti[2:end] .+ ti[1:end-1]) ./ 2  # Time grid for flux
 
     # Initialize ALK and DIC
     ALK[:, 1] .= initial_conditions.alk0
+    alk0 = initial_conditions.alk0
     DIC[:, 1] .= initial_conditions.dic0
+    dic0 = initial_conditions.dic0
 
     # Perform carbonate system calculation of the IC from alk0 and dic0
     local_inputs = Dict(
@@ -87,12 +101,12 @@ function timestep!(
         :pressure_out => P
     )
     kwargs = merge(local_inputs, co2sys_params)
-    co2sys_save = co2sys_module.co2sys(kwargs)
+    co2sys_save = CO2SYS.run_calculations(kwargs)
 
     # save output data of the IC
     pCO2[:, 1] = co2sys_save["pCO2_out"]  # Adjust index for Julia (1-based)
     pH[:, 1] = co2sys_save["pH_out"]      # Adjust index as needed
-    ΔpCO2[1] = co2sys_save["pCO2_out"] - pCO2_air
+    ΔpCO2[1] = pCO2[end, 1] - pCO2_air
 
     # Parameters for Crank-Nicholson
     alp = dt / (2 * dz^2)
@@ -121,9 +135,9 @@ function timestep!(
         # Get pCO2 at surface to calculate flux
         local_inputs = Dict(
             :par1_type => 1,
-            :par1 => alk1[end],
+            :par1 => alk0[end],
             :par2_type => 2,
-            :par2 => dic1[end],
+            :par2 => dic0[end],
             :salinity => S[end,ii],
             :temperature => T[end,ii],
             :temperature_out => T[end,ii],
@@ -131,7 +145,7 @@ function timestep!(
             :pressure_out => 0.0
         )
         kwargs = merge(local_inputs, co2sys_params)
-        co2sys_results = co2sys_module.co2sys(kwargs)
+        co2sys_results = CO2SYS.run_calculations(kwargs)
         pco2 = co2sys_results["pCO2_out"]  # can use fCO2_out if preferred
 
         # Calculate CO₂ flux [mol m⁻² s⁻¹]
@@ -151,8 +165,8 @@ function timestep!(
         dic1 = LHS \ RHS_dic
 
         # Update ALK and DIC matrices
-        alk0 = alk1
-        dic0 = dic1
+        alk0 .= alk1
+        dic0 .= dic1
 
         # Save data every DT timesteps
         if (ii-1) % ind_save == 0 && inc <= NT
@@ -174,7 +188,7 @@ function timestep!(
                 :pressure_out => P
             )
             kwargs = merge(local_inputs, co2sys_params)
-            co2sys_save = co2sys_module.co2sys(kwargs)
+            co2sys_save = CO2SYS.run_calculations(kwargs)
 
             # save data for output
             pCO2[:, inc] = co2sys_save["pCO2_out"]  # Adjust index for Julia (1-based)

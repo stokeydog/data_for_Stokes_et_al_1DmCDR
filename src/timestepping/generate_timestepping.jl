@@ -12,10 +12,10 @@ Generates the total simulation time, number of time steps, and the time array fo
 - `nt` [Int]: Number of time steps.
 - `ti` [Vector{Float64}]: Time array for the simulation.
 """
-function generate_timestepping(sim_duration_days::Float64, dt::Int64)::TimeStepInfo
+function generate_timestepping(sim_duration_days::Float64, timestep::Int64)::TimeStepInfo
     # Calculate total simulation time in seconds
     Tend = sim_duration_days * 24 * 3600  # Total run time in seconds
-
+    dt = timestep
     # Calculate number of time steps (ceiling to ensure complete coverage)
     nt = ceil(Int, Tend / dt) + 1
 
