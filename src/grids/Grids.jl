@@ -3,10 +3,11 @@
 module Grids
 
 # Define the GridCN1D struct 
-struct GridCN1D
+abstract type AbstractGrid end
+struct GridCN1D <: AbstractGrid 
     z::Vector{Float64}
     dz::Float64
-    nz::Int
+    nz::Int64
     max_depth::Float64
 end
 
@@ -14,6 +15,6 @@ end
 include(joinpath(@__DIR__, "generate_grid_1D.jl"))
 
 # Export each function for easy use in other modules
-export GridCN1D, generate_grid_1D
+export AbstractGrid, GridCN1D, generate_grid_1D
 
 end # module Grids

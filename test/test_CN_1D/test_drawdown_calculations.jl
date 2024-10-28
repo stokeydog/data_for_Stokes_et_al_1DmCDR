@@ -3,21 +3,22 @@ using Revise
 
 # Script begins here:
 using YAML
+using Plots
 
 # Add PoseidonMRV module to the LOAD_PATH
 push!(LOAD_PATH, "C:/Users/istok/Programming/Julia/PoseidonMRV/src")
 using PoseidonMRV
 
 # Load configuration
-config_file_path = "test/test_CN_1D/test_config_CN_1D.yaml"
-config = PoseidonMRV.Utils.load_config(config_file_path)
+config_file_path    = "test/test_CN_1D/test_config_CN_1D.yaml"
+config              = PoseidonMRV.Utils.load_config(config_file_path)
 
 # Extract properties from configuration file
-co2sys_params = config["co2sys_params"]
-ocn_props_config = config["ocn_props"]
-atm_props_config = config["atm_props"]
-pert_props = config["pert_props"]
-depth_grid_config = config["depth_grid"]
+co2sys_params       = config["co2sys_params"]
+ocn_props_config    = config["ocn_props"]
+atm_props_config    = config["atm_props"]
+pert_props          = config["pert_props"]
+depth_grid_config   = config["depth_grid"]
 timestepping_config = config["timestepping"]
 
 # Generate grid, timestepping, output config, ocn&atm properties
@@ -44,7 +45,19 @@ ALK, DIC, pH, pCO2, ΔpCO2, F, tiF, rho_matrix = PoseidonMRV.CrankNicholson1D.ti
 )
 println("Crank-Nicholson Ran Successfully")
 
+# Calculate and compare carbon uptake over time
+drawdown_flux_interp, drawdown_dic, drawdown_difference, drawdown_relative_difference = PoseidonMRV.CalcDrawdown.compare_drawdown_flux_vs_dic_1D(
+    F,
+    tiF,
+    time_steps.dt,
+    DIC,
+    rho_matrix,
+    output_config.TI,
+    grid
+)
+
 # Add a visualization to make sure results arent garbage
 
 # Visualize results
-PoseidonMRV.Visualize.plot_results(ALK, DIC, pH, pCO2, ΔpCO2, F, tiF, grid.z, output_config.TI)
+PoseidonMRV.Visualize.plot_profiles(ALK, DIC, pH, pCO2, ΔpCO2, F, tiF, grid.z, output_config.TI)
+PoseidonMRV.Visualize.plot_drawdown(output_config.TI, drawdown_dic, drawdown_flux_interp, drawdown_difference, drawdown_relative_difference)

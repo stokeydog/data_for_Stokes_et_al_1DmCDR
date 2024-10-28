@@ -52,7 +52,7 @@ function timestep!(
 )::Tuple{
     Matrix{Float64}, Matrix{Float64}, Matrix{Float64},
     Matrix{Float64}, Vector{Float64}, Vector{Float64},
-    Vector{Float64}
+    Vector{Float64}, Matrix{Float64}
 }
 
     # unpack grid, timestepping, and output configuration
@@ -81,6 +81,11 @@ function timestep!(
     ΔpCO2 = fill(NaN, NT)
     F = fill(NaN, nt - 1)
     tiF = (ti[2:end] .+ ti[1:end-1]) ./ 2  # Time grid for flux
+    rho_matrix = fill(NaN, nz, NT)  # Matrix to store density profiles
+
+    # Calculate density using GSW package at initial time
+    rho = GibbsSeaWater.gsw_rho.(S[:,1], T[:,1], 0)  # kg/m³
+    rho_matrix[:, 1] = rho
 
     # Initialize ALK and DIC
     ALK[:, 1] .= initial_conditions.alk0
@@ -104,8 +109,8 @@ function timestep!(
     co2sys_save = CO2SYS.run_calculations(kwargs)
 
     # save output data of the IC
-    pCO2[:, 1] = co2sys_save["pCO2_out"]  # Adjust index for Julia (1-based)
-    pH[:, 1] = co2sys_save["pH_out"]      # Adjust index as needed
+    pCO2[:, 1] = co2sys_save["pCO2_out"]  
+    pH[:, 1] = co2sys_save["pH_out"]      
     ΔpCO2[1] = pCO2[end, 1] - pCO2_air
 
     # Parameters for Crank-Nicholson
@@ -171,6 +176,10 @@ function timestep!(
         # Save data every DT timesteps
         if (ii-1) % ind_save == 0 && inc <= NT
 
+            # Store rho at current time
+            rho = GibbsSeaWater.gsw_rho.(S[:,ii], T[:,ii], 0)  # kg/m³
+            rho_matrix[:, inc] .= rho
+
             # First save the new TA and DIC
             ALK[:, inc] = alk1
             DIC[:, inc] = dic1
@@ -202,7 +211,7 @@ function timestep!(
 
     end
 
-    return ALK, DIC, pH, pCO2, ΔpCO2, F, tiF
+    return ALK, DIC, pH, pCO2, ΔpCO2, F, tiF, rho_matrix
 end
 
 end # module

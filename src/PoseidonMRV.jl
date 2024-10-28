@@ -37,7 +37,7 @@ using .Utils
 println("Utils uploaded successfully")
 
 include("grids/Grids.jl")
-using .Grids
+using .Grids: AbstractGrid
 println("Grids uploaded successfully")
 
 include("timestepping/TimeStepping.jl")
@@ -62,6 +62,11 @@ println("AtmProperties uploaded successfully")
 
 # Tier-1 modules: models and visualization
 # these depend on base-level modules, so must be included after base-level.
+
+include("drawdown_calculations/CalcDrawdown.jl")
+using .CalcDrawdown
+println("CalcDrawdown uploaded successfully")
+
 include("models/CrankNicholson1D.jl")
 using .CrankNicholson1D
 println("CrankNicholson1D uploaded successfully")

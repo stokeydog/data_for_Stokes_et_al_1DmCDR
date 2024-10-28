@@ -2,6 +2,8 @@
 
 module InitialConditions
 
+using ..Grids: AbstractGrid, GridCN1D
+
 struct InitialConditions1D
     alk0::Vector{Float64}
     dic0::Vector{Float64}
@@ -11,6 +13,6 @@ end
 include(joinpath(@__DIR__, "generate_initial_conditions_1D.jl"))
 
 # Export each function for easy use in other modules
-export generate_initial_conditions_1D
+export InitialConditions1D, generate_initial_conditions_1D
 
 end # end module

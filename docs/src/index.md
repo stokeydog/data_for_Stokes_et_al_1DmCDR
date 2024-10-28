@@ -29,7 +29,8 @@ Pkg.add([
     "Logging",          # Track simulation progress and errors.
     "ArgParse",         # Handle command-line arguments.
     "Test",             # Implement testing suites.
-    "ProgressMeter"     # Show the sim progress.
+    "ProgressMeter",    # Show the sim progress.
+    "Interpolations"    # Interpolate stuff
     ])
 
 ### ----------------------------------- ###

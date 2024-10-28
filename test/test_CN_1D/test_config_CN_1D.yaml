@@ -32,9 +32,13 @@ timestepping:
 # Perturbation Properties
 pert_props:
   dilution: 100  # dilution factor [1]
-  perturbed_layer_thickness: 1.0  # [m]
-  alk0: 2300.0 # [umol/kgSW]
-  dic0: 1000.0 # [umol/kgSW]
+  alk_pert: 2700.0 # [umol/kgSW]
+  dic_pert: 2050.0 # [umol/kgSW]
+  perturbed_layer_thickness: 1.0  # general layer thickness [m]
+  perturbation_depth_start: 1.0 # deep layer runs from pert_depth_start to (pert_depth_start + pert_layer_thickness)[m]
+  perturbation_depth_center: 2.0 # for the Gaussian perturbation [m]
+  perturbation_width: 1.0 # for the Gaussian perturbation [m]
+
 
 
 # CO2SYS Parameters
