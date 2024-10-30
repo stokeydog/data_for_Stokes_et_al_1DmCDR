@@ -36,5 +36,5 @@ function calculate_CO2_flux(pCO2_sea::Float64, pCO2_air::Float64, T::Float64, S:
     # Calculate air-sea CO₂ flux (F_CO2 in mol/m²/s)
     F_CO2 = 0.24 * kg_m_per_s * K0_adjusted * dpCO2_atm
 
-    return F_CO2, dpCO2
+    return F_CO2, dpCO2, kg_m_per_s
 end

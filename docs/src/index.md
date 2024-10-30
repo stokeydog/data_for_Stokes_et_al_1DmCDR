@@ -24,13 +24,16 @@ Pkg.add([
     "JSON",             # Manage configuration files.
     "TOML",             # Manage configuration files.
     "YAML",             # Manage configuration files.
-    "HDF5",             # Advanced data storage.
+    "JLD2",             # Advanced data storage.
     "FileIO",           # Advanced data storage.
     "Logging",          # Track simulation progress and errors.
     "ArgParse",         # Handle command-line arguments.
     "Test",             # Implement testing suites.
     "ProgressMeter",    # Show the sim progress.
-    "Interpolations"    # Interpolate stuff
+    "Interpolations",   # Interpolate stuff
+    "Statistics",       # Statistical stuff
+    "Printf",           # Print output
+    "Dates"             # Time individual runs
     ])
 
 ### ----------------------------------- ###

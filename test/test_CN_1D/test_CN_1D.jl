@@ -32,7 +32,7 @@ initial_conditions  = PoseidonMRV.InitialConditions.generate_initial_conditions_
 println("everything generated")
 
 # Call perform_calculations with necessary inputs
-ALK, DIC, pH, pCO2, ΔpCO2, F, tiF, rho_matrix = PoseidonMRV.CrankNicholson1D.timestep!(
+ALK, DIC, pH, pCO2, ΔpCO2, F, tiF, rho_matrix, kg_m_per_s = PoseidonMRV.CrankNicholson1D.timestep!(
     initial_conditions,
     grid,
     time_steps,

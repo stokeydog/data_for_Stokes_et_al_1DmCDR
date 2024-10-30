@@ -34,7 +34,7 @@ initial_conditions_perturbed  = PoseidonMRV.InitialConditions.generate_initial_c
 println("everything generated")
 
 # Call model with necessary inputs for unperturbed case
-ALK_up, DIC_up, pH_up, pCO2_up, ΔpCO2_up, F_up, tiF_up, rho_matrix_up = PoseidonMRV.CrankNicholson1D.timestep!(
+ALK_up, DIC_up, pH_up, pCO2_up, ΔpCO2_up, F_up, tiF_up, rho_matrix_up, kg_m_per_s = PoseidonMRV.CrankNicholson1D.timestep!(
     initial_conditions_unperturbed,
     grid,
     time_steps,
@@ -47,7 +47,7 @@ ALK_up, DIC_up, pH_up, pCO2_up, ΔpCO2_up, F_up, tiF_up, rho_matrix_up = Poseido
 println("Unperturbed Crank-Nicholson Ran Successfully")
 
 # Call model with necessary inputs for perturbed case
-ALK_p, DIC_p, pH_p, pCO2_p, ΔpCO2_p, F_p, tiF_p, rho_matrix_p = PoseidonMRV.CrankNicholson1D.timestep!(
+ALK_p, DIC_p, pH_p, pCO2_p, ΔpCO2_p, F_p, tiF_p, rho_matrix_p, kg_m_per_s = PoseidonMRV.CrankNicholson1D.timestep!(
     initial_conditions_perturbed,
     grid,
     time_steps,
@@ -57,27 +57,56 @@ ALK_p, DIC_p, pH_p, pCO2_p, ΔpCO2_p, F_p, tiF_p, rho_matrix_p = PoseidonMRV.Cra
     pert_props,
     co2sys_params
 )
-println("Unperturbed Crank-Nicholson Ran Successfully")
+println("Perturbed Crank-Nicholson Ran Successfully")
 
-# need line of code dictating case from provided conditions.
+# need line of code extracting case-type from provided conditions.
 if pert_props["dic_pert"] == ocn_props_config["dic_sw"] && pert_props["alk_pert"] == ocn_props_config["alk_sw"]
     efficiency_case = "unperturbed"
-elseif pert_props["dic_pert"] == ocn_props_config["dic_sw"] && pert_props["alk_pert"] ~= ocn_props_config["alk_sw"]
-max_efficiency = calc_max_efficiency(ALK_up, ALK_p, DIC_p, rho_matrix, grid, ocn_props, co2sys_params; case = "doc")
-
-# Calculate and compare carbon uptake over time
-drawdown_flux_interp, drawdown_dic, drawdown_difference, drawdown_relative_difference = PoseidonMRV.CalcDrawdown.compare_drawdown_flux_vs_dic_1D(
-    F,
-    tiF,
+    max_efficiency = 0
+elseif pert_props["dic_pert"] != ocn_props_config["dic_sw"] && pert_props["alk_pert"] == ocn_props_config["alk_sw"]
+    efficiency_case = "doc"
+    max_efficiency = PoseidonMRV.CalcDrawdown.calc_max_efficiency(ALK_up, ALK_p, DIC_p, rho_matrix, grid, ocn_props, co2sys_params; case = efficiency_case)
+elseif pert_props["dic_pert"] == ocn_props_config["dic_sw"] && pert_props["alk_pert"] != ocn_props_config["alk_sw"]
+    efficiency_case = "oae"
+    max_efficiency = PoseidonMRV.CalcDrawdown.calc_max_efficiency(ALK_up, ALK_p, DIC_p, rho_matrix, grid, ocn_props, co2sys_params; case = efficiency_case)
+elseif pert_props["dic_pert"] != ocn_props_config["dic_sw"] && pert_props["alk_pert"] != ocn_props_config["alk_sw"]
+    efficiency_case = "mixed"
+    max_efficiency = PoseidonMRV.CalcDrawdown.calc_max_efficiency(ALK_up, ALK_p, DIC_p, rho_matrix, grid, ocn_props, co2sys_params; case = efficiency_case)
+end
+    
+# Calculate and compare carbon uptake over time, unperturbed case
+drawdown_flux_interp_up, drawdown_dic_up, drawdown_difference_up, drawdown_relative_difference_up = PoseidonMRV.CalcDrawdown.compare_drawdown_flux_vs_dic_1D(
+    F_up,
+    tiF_up,
     time_steps.dt,
-    DIC,
-    rho_matrix,
+    DIC_up,
+    rho_matrix_up,
     output_config.TI,
     grid
 )
 
-# Add a visualization to make sure results arent garbage
+# Calculate and compare carbon uptake over time, perturbed case
+drawdown_flux_interp_p, drawdown_dic_p, drawdown_difference_p, drawdown_relative_difference_p = PoseidonMRV.CalcDrawdown.compare_drawdown_flux_vs_dic_1D(
+    F_p,
+    tiF_p,
+    time_steps.dt,
+    DIC_p,
+    rho_matrix_p,
+    output_config.TI,
+    grid
+)
+
+# Verify that the calculations from flux and DIC are comparable. 
+threshold = 1.0 # percent diff for error, e.g. if >1% difference, review the sim output
+if any(x -> x > threshold, drawdown_relative_difference_up) || any(x -> x > threshold, drawdown_relative_difference_p)
+    error("Error: Calculations of drawdown from flux and DIC are not consistent. Review model output, or consider adjusting threshold.")
+end
+
+# Calculate additionality (difference between perturbed and unperturbed cases)
+additionality_dic = drawdown_dic_p .- drawdown_dic_up
+additionality_flux = drawdown_flux_interp_p .- drawdown_flux_interp_up
 
 # Visualize results
-PoseidonMRV.Visualize.plot_profiles(ALK, DIC, pH, pCO2, ΔpCO2, F, tiF, grid.z, output_config.TI)
-PoseidonMRV.Visualize.plot_drawdown(output_config.TI, drawdown_dic, drawdown_flux_interp, drawdown_difference, drawdown_relative_difference)
+PoseidonMRV.Visualize.plot_profiles(ALK_p, DIC_p, pH_p, pCO2_p, ΔpCO2_p, F_p, tiF_p, grid.z, output_config.TI)
+PoseidonMRV.Visualize.plot_drawdown(output_config.TI, drawdown_dic_p, drawdown_flux_interp_p, drawdown_difference_p, drawdown_relative_difference_p)
+PoseidonMRV.Visualize.plot_additionality(output_config.TI, additionality_dic, additionality_flux)

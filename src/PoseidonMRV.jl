@@ -1,30 +1,65 @@
 # src/PoseidonMRV.jl
 module PoseidonMRV
+
+# using YAML
+# using Plots
 using PyCall
+# using Statistics
+# using Distributed
 
-########################
-### ~ PYTHON CALLS ~ ###
-# First, set the Python environment to the pyseidon virtual environment
-ENV["PYTHON"] = joinpath(@__DIR__, "../python/pyseidon/Scripts/python.exe")
+function __init__()
+    # Set the Python environment to the pyseidon virtual environment
+    # Set the Python environment if not already set
+    if !haskey(ENV, "PYTHON")
+        ENV["PYTHON"] = joinpath(@__DIR__, "../python/pyseidon/Scripts/python.exe")
+    end
+    
+    # Check if the specified Python executable exists
+    if !isfile(ENV["PYTHON"])
+        error("The specified Python executable does not exist: $(ENV["PYTHON"])")
+    end
 
-# Check if PyCall needs to rebuild after changing the Python environment
-if !isfile(ENV["PYTHON"])
-    error("The specified Python executable does not exist: $(ENV["PYTHON"])")
+    # Check if PyCall is using the correct Python executable
+    if PyCall.python != ENV["PYTHON"]
+        @warn """
+        PyCall is currently configured to use $(PyCall.python).
+        The desired Python executable is $(ENV["PYTHON"]).
+        If you encounter errors with python calls, please rebuild PyCall with the desired Python environment by running: using Pkg; Pkg.build("PyCall")
+        If running parallel computations it's okay to ignore this message so long as the path $(PyCall.python) leads to $(ENV["PYTHON"])
+        """
+    else
+        println("Using Python executable: ", PyCall.python)
+    end
+
+    # _initialize_submodules()
 end
+# using PyCall
 
-# Force a rebuild of PyCall if the Python environment changes
-if PyCall.python != ENV["PYTHON"]
-    println("Rebuilding PyCall to use the specified Python environment...")
-    using Pkg
-    Pkg.build("PyCall")
-end
+# ########################
+# ### ~ PYTHON CALLS ~ ###
+# # First, set the Python environment to the pyseidon virtual environment
+# ENV["PYTHON"] = joinpath(@__DIR__, "../python/pyseidon/Scripts/python.exe")
 
-# Now you can safely use PyCall
-using PyCall
-println("Using Python executable: ", PyCall.python)
+# # Check if PyCall needs to rebuild after changing the Python environment
+# if !isfile(ENV["PYTHON"])
+#     error("The specified Python executable does not exist: $(ENV["PYTHON"])")
+# end
+
+# # Force a rebuild of PyCall if the Python environment changes
+# if PyCall.python != ENV["PYTHON"]
+#     println("Rebuilding PyCall to use the specified Python environment...")
+#     using Pkg
+#     Pkg.build("PyCall")
+# end
+
+# # Now you can safely use PyCall
+# using PyCall
+# println("Using Python executable: ", PyCall.python)
 
 #############################
 ### ~ HIERARCHY MATTERS ~ ###
+
+# function _initialize_submodules()
 println("Starting submodule uploads...")
 
 # Base-level modules:
@@ -78,6 +113,10 @@ println("Visualize uploaded successfully")
 # Tier-2 functions: 
 # These would be comparative model runs, etc.
 
+include("parproc/ParProc.jl")
+using .ParProc
+println("ParProc uploaded successfully")
+
 # Export modules for external use
 export Grids
 export TimeStepping
@@ -89,6 +128,8 @@ export Utils
 export OcnProperties
 export AtmProperties
 export CO2SYS
+export ParProc
+# end
 
 end # module
 

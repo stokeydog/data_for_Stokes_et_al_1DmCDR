@@ -15,8 +15,6 @@ function compare_drawdown_flux_vs_dic_1D(
     drawdown_flux = calc_drawdown_from_flux_1D(F, dt)  # mol m⁻²
 
     # Interpolate uptake_flux to the times of DIC outputs
-    # drawdown_flux_interp = interp_time_series(drawdown_flux, tiF, TI)
-    # drawdown_flux_interp = Interpolations.interp1(tiF, drawdown_flux, TI, left = NaN, right = NaN)
     drawdown_flux_interp = interp_time_series(drawdown_flux, tiF, TI)
     drawdown_flux_interp .-= drawdown_flux_interp[1]
 
@@ -27,11 +25,11 @@ function compare_drawdown_flux_vs_dic_1D(
     drawdown_difference = drawdown_dic .- drawdown_flux_interp
     drawdown_relative_difference = drawdown_difference ./ drawdown_dic * 100  # Percentage
 
-    # Print summary statistics
-    println("Final carbon drawdown from flux: ", drawdown_flux_interp[end], " mol m⁻²")
-    println("Final carbon drawdown from DIC: ", drawdown_dic[end], " mol m⁻²")
-    println("Final absolute difference: ", drawdown_difference[end], " mol m⁻²")
-    println("Final relative difference: ", drawdown_relative_difference[end], " %")
+    # Print summary statistics (Comment out for parallel runs)
+    # println("Final carbon drawdown from flux: ", drawdown_flux_interp[end], " mol m⁻²")
+    # println("Final carbon drawdown from DIC: ", drawdown_dic[end], " mol m⁻²")
+    # println("Final absolute difference: ", drawdown_difference[end], " mol m⁻²")
+    # println("Final relative difference: ", drawdown_relative_difference[end], " %")
 
     return drawdown_flux_interp, drawdown_dic, drawdown_difference, drawdown_relative_difference
 end

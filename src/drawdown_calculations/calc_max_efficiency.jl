@@ -21,6 +21,7 @@ function calc_max_efficiency(
 
         # Extract dz for depth integration
         dz = grid.dz  # Depth interval in meters
+        nz = grid.nz  # Number of grid points
 
         # Calculate total DIC in water column in perturbed initial condition
         dic0_molm3 = DIC_p[:, 1] .* rho_matrix[:, 1] * 1e-6  # mol m⁻³ (Convert DIC to mol m⁻³ at time t0)
@@ -59,16 +60,20 @@ function calc_max_efficiency(
         )
         kwargs = merge(local_inputs, co2sys_params)
         co2sys_modified_alk = CO2SYS.run_calculations(kwargs)
-        DIC_modified_alk = co2sys_modified_alk["DIC_out"] 
+        DIC_modified_alk = co2sys_modified_alk["dic"] 
 
         # Calculate the max DIC uptake from perturbation
-        max_DIC_uptake = sum(DIC_modified_alk) .* rho_matrix[:, 1] * 1e-6 * dz - total_dic0_molm2 # mol m⁻²
+        max_DIC_uptake = sum(DIC_modified_alk) .* rho_matrix[:, 1] * 1e-6 * dz .- total_dic0_molm2 # mol m⁻²
 
         # Calculate the max efficiency
         max_efficiency = max_DIC_uptake / dALK_molm2
-    else
-        error("Mixed case not yet implemented: $case")
+    elseif case == "mixed"
+        error("Mixed case not yet implemented")
     end
+
+end
+
+## MATLAB code for reference.
     # dic0z = trapz(z,dic0);
     # dALK = (trapz(z,alk0)-trapz(z,alk0up))*mean(rho)*1e-6; % Total alk addition [mol/m^2]
 

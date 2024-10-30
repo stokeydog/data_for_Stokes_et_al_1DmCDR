@@ -52,7 +52,7 @@ function timestep!(
 )::Tuple{
     Matrix{Float64}, Matrix{Float64}, Matrix{Float64},
     Matrix{Float64}, Vector{Float64}, Vector{Float64},
-    Vector{Float64}, Matrix{Float64}
+    Vector{Float64}, Matrix{Float64}, Float64
 }
 
     # unpack grid, timestepping, and output configuration
@@ -73,7 +73,7 @@ function timestep!(
     pCO2_air = atm_props.pCO2_air
     u_10 = atm_props.u_10
 
-    # Preallocate output matrices
+    # Preallocate output
     ALK = fill(NaN, nz, NT)
     DIC = fill(NaN, nz, NT)
     pH = fill(NaN, nz, NT)
@@ -82,6 +82,7 @@ function timestep!(
     F = fill(NaN, nt - 1)
     tiF = (ti[2:end] .+ ti[1:end-1]) ./ 2  # Time grid for flux
     rho_matrix = fill(NaN, nz, NT)  # Matrix to store density profiles
+    kg_m_per_s = NaN
 
     # Calculate density using GSW package at initial time
     rho = GibbsSeaWater.gsw_rho.(S[:,1], T[:,1], 0)  # kg/m³
@@ -120,7 +121,8 @@ function timestep!(
     # Calculate the saving interval in timesteps
     ind_save = ceil(Int, output_config.save_interval_seconds / dt)
 
-    @showprogress for ii in 2:nt
+    # @showprogress for ii in 2:nt
+    for ii in 2:nt
         # Calculate density using GSW package
         rho = GibbsSeaWater.gsw_rho(S[end,ii], T[end,ii], 0)  # mol/kg to mol/m³
 
@@ -154,8 +156,8 @@ function timestep!(
         pco2 = co2sys_results["pCO2_out"]  # can use fCO2_out if preferred
 
         # Calculate CO₂ flux [mol m⁻² s⁻¹]
-        F[ii - 1], dpCO2 = Utils.calculate_CO2_flux(pco2, pCO2_air, T[end,ii], S[end,ii], u_10)
-
+        F[ii - 1], dpCO2, kg_m_per_s = Utils.calculate_CO2_flux(pco2, pCO2_air, T[end,ii], S[end,ii], u_10)
+        
         # Calculate d(DIC)/dz to apply DIC flux 
         # recall F_DIC = kappa * d(DIC)/dz; F_DIC = F_pCO2 / rho; 1e6 for atm to μatm
         dDICdz = F[ii - 1] * 1e6 / (kap_current[end] * rho)
@@ -211,7 +213,7 @@ function timestep!(
 
     end
 
-    return ALK, DIC, pH, pCO2, ΔpCO2, F, tiF, rho_matrix
+    return ALK, DIC, pH, pCO2, ΔpCO2, F, tiF, rho_matrix, kg_m_per_s
 end
 
 end # module

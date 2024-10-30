@@ -11,6 +11,7 @@ include(joinpath(@__DIR__, "construct_CN_matricies.jl"))
 include(joinpath(@__DIR__, "create_output_directory.jl"))
 include(joinpath(@__DIR__, "interp_time_series.jl"))
 include(joinpath(@__DIR__, "load_config.jl"))
+include(joinpath(@__DIR__, "max_non_nan.jl"))
 include(joinpath(@__DIR__, "save_results_as_csv.jl"))
 include(joinpath(@__DIR__, "save_results_as_json.jl"))
 include(joinpath(@__DIR__, "setup_logging.jl"))
@@ -24,6 +25,7 @@ export construct_CN_matricies
 export create_output_directory
 export interp_time_series
 export load_config
+export max_non_nan
 export save_results_as_csv
 export save_results_as_json
 export setup_logging

@@ -28,9 +28,10 @@ depth_grid:
 # consider the CN stability criterion when setting timestep: 
 # dt_max = dz^2 / (2 * max_vertical_diffusivity)
 timestepping:
-  timestep: 1800 # [s]
-  sim_duration_days: 1.0
-  save_interval_hours: 1
+  # timestep: 1800 # [s]
+  # sim_duration_days: 0.041666666666666664 # (1/24) # use float here
+  sim_duration_days: 1.0 # use float here
+  save_interval_hours: 1 # use integer here
 
 # Perturbation Properties
 pert_props:
@@ -53,8 +54,3 @@ co2sys_params:
   opt_k_bisulfate: 1      # Constants from Dickson (1990) KSO4
   opt_k_fluoride: 2       # Constants from Perez & Fraga (1987) KF
   opt_total_borate: 2     # Lee et al (2010) TB
-
-# # Atmospheric Data
-# pH20: 0.0227
-# pAir: 1
-# xCO2atm: 535
