@@ -4,7 +4,7 @@
 model: "CrankNicholson1D"
 
 # Model setup
-setup: "inf_EL"
+setup: "inf_ELD"
 
 # Oceanographic Properties
 ocn_props:
@@ -21,8 +21,8 @@ atm_props:
 
 # Vertical Grid
 depth_grid:
-  max_depth: 10.0
-  dz: 0.1
+  max_depth: 100.0
+  dz: 0.5
 
 # Timstepping (for CrankNicholson use)
 # consider the CN stability criterion when setting timestep: 
@@ -30,7 +30,7 @@ depth_grid:
 timestepping:
   # timestep: 1800 # [s]
   # sim_duration_days: 0.041666666666666664 # (1/24) # use float here
-  sim_duration_days: 1.0 # use float here
+  sim_duration_days: 30.0 # use float here
   save_interval_hours: 1 # use integer here
 
 # Perturbation Properties
@@ -38,7 +38,7 @@ pert_props:
   dilution: 0  # dilution factor [1]
   alk_pert: 2300.0 # [umol/kgSW] use 2700 for perturbation, 2300 for baseline
   dic_pert: 1050.0 # [umol/kgSW] use 1050 for perturbation, 2050 for baseline
-  perturbed_layer_thickness: 10.0  # general layer thickness [m]
+  perturbed_layer_thickness: 100.0  # general layer thickness [m]
   perturbation_depth_start: 1.0 # deep layer runs from pert_depth_start to (pert_depth_start + pert_layer_thickness)[m]
   perturbation_depth_center: 2.0 # for the Gaussian perturbation [m]
   perturbation_width: 1.0 # for the Gaussian perturbation [m]

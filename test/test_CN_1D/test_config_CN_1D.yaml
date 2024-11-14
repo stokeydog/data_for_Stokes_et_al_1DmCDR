@@ -8,7 +8,7 @@ setup: "inf_EL"
 
 # Oceanographic Properties
 ocn_props:
-  vertical_diffusivity_ML: 1e-6 # [m^2/s]
+  vertical_diffusivity_ML: 1e-9 # [m^2/s]
   temperature: 15.0 # [C]
   salinity: 35.0 # [psu]
   alk_sw: 2300.0 # [umol/kgSW]
@@ -29,7 +29,7 @@ depth_grid:
 # dt_max = dz^2 / (2 * max_vertical_diffusivity)
 timestepping:
   timestep: 1800 # [s]
-  sim_duration_days: 1.0
+  sim_duration_days: 10.0
   save_interval_hours: 1
 
 # Perturbation Properties

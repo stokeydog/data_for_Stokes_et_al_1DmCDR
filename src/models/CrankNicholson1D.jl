@@ -159,8 +159,8 @@ function timestep!(
         F[ii - 1], dpCO2, kg_m_per_s = Utils.calculate_CO2_flux(pco2, pCO2_air, T[end,ii], S[end,ii], u_10)
         
         # Calculate d(DIC)/dz to apply DIC flux 
-        # recall F_DIC = kappa * d(DIC)/dz; F_DIC = F_pCO2 / rho; 1e6 for atm to μatm
-        dDICdz = F[ii - 1] * 1e6 / (kap_current[end] * rho)
+        # recall F_DIC = kappa * d(DIC)/dz; F_DIC = F_pCO2 / rho; 
+        dDICdz = -F[ii - 1] / (kap_current[end] * rho) * 1e6 # multiply by 1e6 to convert atm to μatm
 
         # Update RHS of matricies and apply DIC flux
         RHS_alk = RHS * alk0

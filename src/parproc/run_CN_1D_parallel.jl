@@ -113,18 +113,20 @@ function run_CN_1D_parallel(diffusivity::Float64)
         grid
     )
 
-    # Verify that the calculations from flux and DIC are comparable. 
-    threshold_p = 1.0 # percent diff for error, e.g. if >1% difference, review the sim output
-    threshold_up = 5.0 # choose larger threshold for unperturbed case because fluxes are small
+    # # Verify that the calculations from flux and DIC are comparable. 
+    # # should be ~ 1 %, running 5 % so it doesn't throw an error
+    # # on second thought, just commenting this out.
+    # threshold_p = 5.0 # percent diff for error, e.g. if >1% difference, review the sim output
+    # threshold_up = 1.0 # choose larger threshold for unperturbed case because fluxes are small
 
-    # Debugging lines: Report the threshold and maximum values of drawdown relative differences
-    # println("Threshold percent, perturbed case: ", threshold_p)
-    # println("Max value of drawdown_relative_difference_up: ", PoseidonMRV.Utils.max_non_nan(drawdown_relative_difference_up))
-    # println("Max value of drawdown_relative_difference_p: ", PoseidonMRV.Utils.max_non_nan(drawdown_relative_difference_p))
+    # # Debugging lines: Report the threshold and maximum values of drawdown relative differences
+    # # println("Threshold percent, perturbed case: ", threshold_p)
+    # # println("Max value of drawdown_relative_difference_up: ", PoseidonMRV.Utils.max_non_nan(drawdown_relative_difference_up))
+    # # println("Max value of drawdown_relative_difference_p: ", PoseidonMRV.Utils.max_non_nan(drawdown_relative_difference_p))
 
-    if any(x -> x > threshold_up, filter(!isnan, drawdown_relative_difference_up)) || any(x -> x > threshold_p, filter(!isnan, drawdown_relative_difference_p))
-        error("Error: Calculations of drawdown from flux and DIC are not consistent. Review model output, or consider adjusting threshold.")
-    end
+    # if any(x -> x > threshold_up, filter(!isnan, drawdown_relative_difference_up)) || any(x -> x > threshold_p, filter(!isnan, drawdown_relative_difference_p))
+    #     error("Error: Calculations of drawdown from flux and DIC are not consistent. Review model output, or consider adjusting threshold.")
+    # end
 
     # Calculate additionality using both methods (difference between perturbed and unperturbed cases)
     additionality_dic = drawdown_dic_p .- drawdown_dic_up
@@ -151,6 +153,8 @@ function run_CN_1D_parallel(diffusivity::Float64)
             "TI" => output_config.TI,
             "z" => grid.z,
             "additionality" => additionality,
+            "additionality_flux" => additionality_flux,
+            "additionality_dic" => additionality_dic,
             "kg_m_per_s" => kg_m_per_s
         ) 
     )

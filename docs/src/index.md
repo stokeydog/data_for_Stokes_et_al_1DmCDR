@@ -119,3 +119,10 @@ using Revise
 
 using Pkg
 Pkg.add("PoseidonMRV")
+
+
+## Parallel Computing:
+If things get all weird, run these bash scripts to empty cache (if on windows use git bash)
+
+rm -rf ~/.julia/compiled
+rm -rf ~/.julia/packages/PyCall
