@@ -20,25 +20,25 @@ PoseidonMRV (but we'll be changing the name on Tom's request)
 |---results
 
 |---src
+
     | PoseidonMRV.jl
+
     |---atm_properties
-    |       The AtmProperties module sets the atmospheric forcing 
-    |       At present, this is pCO2_air and U_10
-    |
+
+    |       The AtmProperties module sets the atmospheric forcing. At present, this is pCO2_air and U_10
+
     |---co2sys
+
     |       The CO2SYS module invokes PyCall to run PyCO2SYS
-    |
+
     |---drawdown_calculations
-    |       The CalcDrawdown module calculates additionality
-    |       At present, this runs the calculation using (1) depth-integrated DIC and (2) time-integrated flux
-    |       There's also a function to verify that these two methods are consistent.
-    |       In the example scripts, this function triggers a warning if consistency does not meet specified thresholds
-    |
+
+    |       The CalcDrawdown module calculates additionality. At present, this runs the calculation using (1) depth-integrated DIC and (2) time-integrated flux. There's also a function to verify that these two methods are consistent. In the example scripts, this function triggers a warning if consistency does not meet specified thresholds
+
     |---grids
-    |       The Grids module builds vertical grids
-    |       At present, its just a vertical z-grid with linear spacing
-    |       Future developments should include surface-enhanced grids, 2D grids, etc.
-    |
+
+    |       The Grids module builds vertical grids. At present, its just a vertical z-grid with linear spacing. Future developments should include surface-enhanced grids, 2D grids, etc.
+
     |---initial_conditions
     |       Two modules live here, InitialConditions and LoadInitialConditions.
     |       The idea of InitialConditions is set up vertical vectors based on user-defined inputs
