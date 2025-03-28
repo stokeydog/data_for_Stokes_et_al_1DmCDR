@@ -1,5 +1,5 @@
 """
-    calculate_schmidt_number(T::Float64) -> Float64
+calculate_schmidt_number(T::Float64) -> Float64
 
 Calculates the Schmidt number for CO₂ in seawater based on temperature.
 

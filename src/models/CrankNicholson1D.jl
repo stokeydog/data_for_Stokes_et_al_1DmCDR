@@ -1,10 +1,19 @@
+"""
+This is the main Crank-Nicoloson 1D computational algorithm
+
+The idea is to use the "models" folder as a place to set up a collection
+of various computational algorithms, then in the configuration file 
+users can choose which model they want to use.
+"""
+
 # for development purposes only:
 using Revise 
 
 # Script begins here:
-module CrankNicholson1D
+module CrankNicholson1D # will have to rename this, learned theres no 'h'
 
 export timestep!
+export constant_Bic_callback
 
 # global dependencies
 using DataFrames
@@ -33,11 +42,16 @@ function timestep!(
     ocn_props::OcnProperties.OcnProperties1D,
     atm_props::AtmProperties.AtmProperties1D,
     pert_props::Dict{Any, Any},
-    co2sys_params::Dict{Any, Any}
+    co2sys_params::Dict{Any, Any};
+    adaptive_diffusivity_callback = nothing,
+    desired_Bic = nothing,
+    kappa_timeseries = nothing,
+    log_kappa = nothing, # "yes" or "no"
 )::Tuple{
     Matrix{Float64}, Matrix{Float64}, Matrix{Float64},
     Matrix{Float64}, Vector{Float64}, Vector{Float64},
-    Vector{Float64}, Matrix{Float64}, Float64
+    Vector{Float64}, Matrix{Float64}, Float64,
+    Matrix{Float64}
 }
 
     # unpack grid, timestepping, and output configuration
@@ -106,8 +120,18 @@ function timestep!(
     # Calculate the saving interval in timesteps
     ind_save = ceil(Int, output_config.save_interval_seconds / dt)
 
-    # @showprogress for ii in 2:nt
-    for ii in 2:nt
+    # Check if kappa is time dependent
+    if kappa_timeseries !== nothing
+        kap = kappa_timeseries[:,1]
+    end
+
+    # Initialize the diffusivity logger
+    if log_kappa == "yes"
+        kappa_log = fill(NaN, nz, nt)
+        kappa_log[:, 1] .= kap
+    end
+
+    @showprogress for ii in 2:nt
         # Calculate density using GSW package
         rho = GibbsSeaWater.gsw_rho(S[end,ii], T[end,ii], 0)  # mol/kg to mol/m³
 
@@ -143,6 +167,33 @@ function timestep!(
         # Calculate CO₂ flux [mol m⁻² s⁻¹]
         F[ii - 1], dpCO2, kg_m_per_s = Utils.calculate_CO2_flux(pco2, pCO2_air, T[end,ii], S[end,ii], u_10)
         
+        # Optionally update diffusivity based on the adaptive callback
+        if kappa_timeseries !== nothing
+            kap = kappa_timeseries[:,ii]
+        # If a callback and a desired Bic are provided, update the diffusivity adaptively
+        elseif adaptive_diffusivity_callback !== nothing && desired_Bic !== nothing
+            ionization_fraction = co2sys_results["dic"] / co2sys_results["aqueous_CO2"]
+            scalar_kap = adaptive_diffusivity_callback(kg_m_per_s, pert_props["perturbed_layer_thickness"], ionization_fraction; desired_Bic)
+            kap = fill(scalar_kap, nz)
+
+        elseif adaptive_diffusivity_callback !== nothing && desired_Bic == nothing
+            # Throw an error
+            error("adaptive_diffusivity_callback was invoked without a specified Bi_c. Please specify the desired Bi_c for the adaptive_diffusivity_callback")
+        else
+            # Otherwise, no change
+        end
+
+        # Use the (possibly updated) diffusivity "kap" to build the CN matrices
+        kap_current = kap 
+        kap_half = zeros(nz + 1) 
+        kap_half[2:end-1] .= 0.5 .* (kap_current[2:end] .+ kap_current[1:end-1])
+        kap_half[1] = kap_current[1]
+        kap_half[end] = kap_current[end]
+
+        if log_kappa == "yes"
+            kappa_log[:, ii] .= kap_current
+        end
+
         # Calculate d(DIC)/dz to apply DIC flux 
         # recall F_DIC = kappa * d(DIC)/dz; F_DIC = F_pCO2 / rho; 
         dDICdz = F[ii - 1] / (kap_current[end] * rho) * 1e6 # multiply by 1e6 to convert atm to μatm
@@ -197,8 +248,17 @@ function timestep!(
         end
 
     end
-
-    return ALK, DIC, pH, pCO2, ΔpCO2, F, tiF, rho_matrix, kg_m_per_s
+    if log_kappa !== "yes"
+        kappa_log = zeros(nz,nt)
+    end
+    return ALK, DIC, pH, pCO2, ΔpCO2, F, tiF, rho_matrix, kg_m_per_s, kappa_log
 end
+
+function constant_Bic_callback(kg_m_per_s, perturbed_layer_thickness, ionization_fraction; desired_Bic)
+    
+    return kg_m_per_s * perturbed_layer_thickness / (desired_Bic * ionization_fraction) # diffusivity for specified Bic
+
+end
+
 
 end # module

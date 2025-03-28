@@ -1,3 +1,8 @@
+"""
+The idea here was to write a module with production-ready codes for visualizing output.
+This space has kind of morphed into a testing area for random visualization codes.
+"""
+
 module Visualize
 
 include(joinpath(@__DIR__, "plot_additionality.jl"))

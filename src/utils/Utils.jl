@@ -1,5 +1,7 @@
 # src/utils/Utils.jl
-
+"""
+This module is where all the random codes live.
+"""
 module Utils
 
 # Include each function from the utils directory relative to Utils.jl's directory

@@ -1,7 +1,7 @@
 using GibbsSeaWater
 
 """
-    calculate_flux(pCO2_sea::Float64, pCO2_atm::Float64, T::Float64, S::Float64, u::Float64) -> Tuple{Float64, Float64}
+calculate_flux(pCO2_sea::Float64, pCO2_atm::Float64, T::Float64, S::Float64, u::Float64) -> Tuple{Float64, Float64}
 
 Calculates the air-sea flux for CO₂ absorption in the ocean.
 

@@ -3,7 +3,6 @@ using Interpolations
 function interp_time_series(
     data::Vector{Float64},
     t_data::Vector{Float64},
-    # t_interp::Vector{Float64}
     t_interp::StepRange{Int64, Int64}
 )::Vector{Float64}
     # Create a linear interpolation object

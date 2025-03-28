@@ -1,7 +1,7 @@
 using SparseArrays
 
 """
-    construct_matrices(alp::Float64, kap_half::Vector{Float64}, nz::Int) -> Tuple{SparseMatrixCSC, SparseMatrixCSC}
+construct_matrices(alp::Float64, kap_half::Vector{Float64}, nz::Int) -> Tuple{SparseMatrixCSC, SparseMatrixCSC}
 
 Constructs the LHS and RHS matrices for Crank-Nicholson method.
 

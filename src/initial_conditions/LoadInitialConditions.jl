@@ -7,10 +7,10 @@ module LoadInitialConditions
 using JSON, YAML, TOML, CSV, DataFrames, Utils
 
 """
-    load_initial_conditions(file::String)
+load_initial_conditions(file::String)
 
-Load initial conditions from a configuration file.
-Supports JSON, YAML, and TOML formats based on file extension.
+Load initial conditions from observations.
+Supports CSV, JSON, YAML, and TOML formats based on file extension.
 """
 function load_initial_conditions(file::String)
     extension = splitext(file)[2]

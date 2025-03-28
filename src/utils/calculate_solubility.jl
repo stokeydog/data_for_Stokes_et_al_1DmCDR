@@ -1,5 +1,5 @@
 """
-    calculate_solubility(T::Float64, S::Float64) -> Float64
+calculate_solubility(T::Float64, S::Float64) -> Float64
 
 Calculates the solubility of CO₂ in seawater based on temperature and salinity using the Weiss (1974) parameterization.
 

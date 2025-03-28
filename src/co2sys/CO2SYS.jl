@@ -1,3 +1,9 @@
+"""
+This module calls PyCO2SYS and is what I use for the carbonate system calculations
+Future development could use OceanBioME or other comparable carbonate solver written in Julia
+It is likely using a native Julia carbonate solver would speed up the code.
+"""
+
 module CO2SYS
 
 using PyCall

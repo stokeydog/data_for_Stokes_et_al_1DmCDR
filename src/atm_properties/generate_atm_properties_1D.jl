@@ -1,6 +1,6 @@
 
 """
-    generate_atmospheric_properties(atm_props::Dict{String, Any}) -> AtmosphericProperties
+generate_atmospheric_properties(atm_props::Dict{String, Any}) -> AtmosphericProperties
 
 Generates the atmospheric properties required for the simulation.
 

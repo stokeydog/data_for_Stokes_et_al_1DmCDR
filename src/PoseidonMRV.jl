@@ -1,11 +1,12 @@
 # src/PoseidonMRV.jl
 module PoseidonMRV
 
-# using YAML
-# using Plots
+# This first bit sets up the python calls for PyCO2SYS.
+# We could probably just use OceanBioME, but PyCO2SYS is the standard approach
+# in most literature, so I'm using that.
+# Down the line we could set up both OceanBioME and PyCO2SYS
+
 using PyCall
-# using Statistics
-# using Distributed
 
 function __init__()
     # Set the Python environment to the pyseidon virtual environment
@@ -31,30 +32,7 @@ function __init__()
         println("Using Python executable: ", PyCall.python)
     end
 
-    # _initialize_submodules()
 end
-# using PyCall
-
-# ########################
-# ### ~ PYTHON CALLS ~ ###
-# # First, set the Python environment to the pyseidon virtual environment
-# ENV["PYTHON"] = joinpath(@__DIR__, "../python/pyseidon/Scripts/python.exe")
-
-# # Check if PyCall needs to rebuild after changing the Python environment
-# if !isfile(ENV["PYTHON"])
-#     error("The specified Python executable does not exist: $(ENV["PYTHON"])")
-# end
-
-# # Force a rebuild of PyCall if the Python environment changes
-# if PyCall.python != ENV["PYTHON"]
-#     println("Rebuilding PyCall to use the specified Python environment...")
-#     using Pkg
-#     Pkg.build("PyCall")
-# end
-
-# # Now you can safely use PyCall
-# using PyCall
-# println("Using Python executable: ", PyCall.python)
 
 #############################
 ### ~ HIERARCHY MATTERS ~ ###
@@ -106,16 +84,12 @@ include("models/CrankNicholson1D.jl")
 using .CrankNicholson1D
 println("CrankNicholson1D uploaded successfully")
 
-include("models/CrankNicholsonNoBuffering1D.jl")
-using .CrankNicholsonNoBuffering1D
-println("CrankNicholsonNoBuffering1D uploaded successfully")
-
 include("visualization/Visualize.jl")
 using .Visualize
 println("Visualize uploaded successfully")
 
-# Tier-2 functions: 
-# These would be comparative model runs, etc.
+# Tier-2 modules: anything that depends on tier-1 modules
+# Parallel processing, comparative model runs, etc.
 
 include("parproc/ParProc.jl")
 using .ParProc

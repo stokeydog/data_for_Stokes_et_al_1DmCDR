@@ -11,6 +11,10 @@ function calc_additionality(
     DIC = DIC_p - DIC_up
 
     # calculate additionality
+        # right now this just uses the DIC calculation.
+        # we could implement an additionality calculation using flux 
+        # and validate that the results are the same
+        # or choose the more conservative value.
     additionality = calc_drawdown_from_dic_1D(DIC, rho_matrix, grid)  # mol m⁻²
     
     return DIC, additionality

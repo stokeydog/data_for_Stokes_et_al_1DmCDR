@@ -1,3 +1,8 @@
+"""
+Max efficiency in OAE is not 100 %, because of some carbonate chemistry nuances.
+This code calculates the theoretical max efficiency (if DOC, max EF is 100%)
+"""
+
 using PoseidonMRV.OcnProperties
 using PoseidonMRV.CO2SYS
 
@@ -72,22 +77,3 @@ function calc_max_efficiency(
     end
 
 end
-
-## MATLAB code for reference.
-    # dic0z = trapz(z,dic0);
-    # dALK = (trapz(z,alk0)-trapz(z,alk0up))*mean(rho)*1e-6; % Total alk addition [mol/m^2]
-
-    # % now calculate the pCO2 associated with the unmodified TA profile
-    # C_TADIC = CO2SYS(alk0up,dic0,1,2,S0,T0,T0,0,0,params.SI,params.PO4,params.NH4,params.H2S,params.pHSC,params.K1K2,...
-    #     params.KSO4,params.KF,params.BOR);
-    # pCO20 = C_TADIC(:,22);      % [uatm]
-
-    # % what must the DIC profile be in order to have pCO20 profile with a modified alkalinity profile?
-    # C_TApCO2 = CO2SYS(alk0,pCO20,1,4,S0,T0,T0,0,0,params.SI,params.PO4,params.NH4,params.H2S,params.pHSC,params.K1K2,...
-    #     params.KSO4,params.KF,params.BOR);
-    # DIC_equil = C_TApCO2(:,26) + C_TApCO2(:,24) + C_TApCO2(:,25); % DIC = CO2 + HCO3 + CO3 [umol/kgSW]
-
-    # delDIC = (trapz(z,DIC_equil)-dic0z)*1e-6*mean(rho); % Max DIC uptake from addition [mol/m^2]
-
-    # maxEF = delDIC/dALK; % this should be a number around 0.8 according to Renforth & Henderson 2017
-    # disp(['Approximate maximum efficiency is ' num2str(maxEF)])

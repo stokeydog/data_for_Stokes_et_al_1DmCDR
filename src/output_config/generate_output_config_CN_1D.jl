@@ -1,5 +1,5 @@
 """
-    generate_output_config(save_interval_hours::Int, dt::Float64, Tend::Float64) -> OutputConfig
+generate_output_config(save_interval_hours::Int, dt::Float64, Tend::Float64) -> OutputConfig
 
 Generates the output configuration for saving simulation results.
 """

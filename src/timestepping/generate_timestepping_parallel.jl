@@ -1,4 +1,4 @@
-function generate_timestepping_parallel(sim_duration_days::Float64, save_interval_hours::Int64, dz::Float64, diffusivity::Float64)::TimeStepInfo
+function generate_timestepping_parallel(sim_duration_days::Float64, save_interval_hours::Int64, dz::Float64, diffusivity::Float64; min_dt = nothing)::TimeStepInfo
     # Calculate maximum allowable timestep
     dt_max = dz^2 / (2 * diffusivity)
 
@@ -10,6 +10,13 @@ function generate_timestepping_parallel(sim_duration_days::Float64, save_interva
         dt = 3600  # Limit to 1 hour if dt_max exceeds 1 hour
     else
         dt = Int(floor(dt_max))  # Use a safe integer approximation of dt_max
+    end
+
+    # apply a minimum timestep
+    if min_dt !== nothing
+        if dt_max < min_dt
+            dt = min_dt
+        end
     end
 
     # Adjust dt to ensure save_interval_seconds / dt is an integer

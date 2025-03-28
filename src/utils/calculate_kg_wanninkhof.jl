@@ -1,5 +1,5 @@
 """
-    calculate_transfer_velocity(T::Float64, u::Float64) -> Float64
+calculate_transfer_velocity(T::Float64, u::Float64) -> Float64
 
 Calculates the transfer velocity (`K`) for CO₂ absorption in the ocean based on wind speed and temperature.
 

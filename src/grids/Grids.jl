@@ -1,5 +1,8 @@
 # src/grids/Grids.jl
-
+"""
+The idea here is to have a module with all the grid codes.
+Right now, its only a linear z-grid.
+"""
 module Grids
 
 # Define the GridCN1D struct 
