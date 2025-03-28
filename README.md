@@ -4,6 +4,48 @@
 ### Overview
 PoseidonMRV is a Julia-based tool designed to estimate carbon drawdown associated with marine Carbon Dioxide Removal (mCDR) interventions. This document walks you through setup and installation.
 
+The package is organized to be modular and leverage Julia's native parallel processing capabilities.
+At the time of writing this README file, the folder structure is
+
+PoseidonMRV (but we'll be changing the name on Tom's request)
+|---active_development
+|---config
+|---examples
+|---python
+|---results
+|---src
+    | PoseidonMRV.jl
+    |---atm_properties
+    |       The AtmProperties module sets the atmospheric forcing 
+    |       At present, this is pCO2_air and U_10
+    |
+    |---co2sys
+    |       The CO2SYS module invokes PyCall to run PyCO2SYS
+    |
+    |---drawdown_calculations
+    |       The CalcDrawdown module calculates additionality
+    |       At present, this runs the calculation using (1) depth-integrated DIC and (2) time-integrated flux
+    |       There's also a function to verify that these two methods are consistent.
+    |       In the example scripts, this function triggers a warning if consistency does not meet specified thresholds
+    |
+    |---grids
+    |       The Grids module builds vertical grids
+    |       At present, its just a vertical z-grid with linear spacing
+    |       Future developments should include surface-enhanced grids, 2D grids, etc.
+    |
+    |---initial_conditions
+    |       Two modules live here, InitialConditions and LoadInitialConditions.
+    |       The idea of InitialConditions is set up vertical vectors based on user-defined inputs
+    |       Supported initializations are given in the function "generate_initial_conditions_1D.jl
+    |       The idea of LoadInitialConditions is to 
+    |---models
+    |---ocn_properties
+    |---output_config
+    |---parproc
+    |---timestepping
+    |---utils
+    |---visualization
+    
 ### Package Dependencies
 Prior to installation, make sure you have all the necessary packages. In order to avoid dependency hell, first delete the files "Project.toml" and "Manifest.toml". This ensures that your PyCall will access the virtual environment within PoseidonMRV. Run this command:
 
@@ -126,7 +168,7 @@ using Revise
 
 
 
-### Using the package
+## Using the package
 Run the following code from the REPL 
 
 using Pkg; Pkg.activate("."); Pkg.instantiate()
