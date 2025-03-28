@@ -103,7 +103,7 @@ progress_channel = Channel{Int}(n_tasks)
 
 # wrap the run function to pass to workers
 @everywhere function run_with_progress_wrapper(diffusivity::Float64, dilution::Float64, H_mixed::Float64, alpha::Float64, config_file_path, adaptive_Bic)
-    PoseidonMRV.ParProc.run_with_progress(diffusivity, dilution, H_mixed, alpha, config_file_path, adaptive_Bic, $progress_channel)
+    PoseidonMRV.ParProc.AnisotropicDilutionParProc.run_with_progress(diffusivity, dilution, H_mixed, alpha, config_file_path, adaptive_Bic, $progress_channel)
     
     # uncomment this to use julia's profiler if the code runs slower than expected
     # @profile PoseidonMRV.ParProc.run_with_progress(diffusivity, $progress_channel)

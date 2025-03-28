@@ -4,7 +4,7 @@
 model: "CrankNicholson1D"
 
 # Model setup
-setup: "inf_MLD_variable_dilution"
+setup: "test"
 
 # Oceanographic Properties
 ocn_props:
@@ -31,7 +31,7 @@ depth_grid:
 timestepping:
   # timestep: 1800 # [s]
   # sim_duration_days: 0.041666666666666664 # (1/24) # use float here
-  sim_duration_days: 30.0 # use float here
+  sim_duration_days: 1.0 # use float here
   save_interval_hours: 1 # use integer here
 
 # Perturbation Properties
