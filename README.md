@@ -8,11 +8,17 @@ The package is organized to be modular and leverage Julia's native parallel proc
 At the time of writing this README file, the folder structure is
 
 PoseidonMRV (but we'll be changing the name on Tom's request)
+
 |---active_development
+
 |---config
+
 |---examples
+
 |---python
+
 |---results
+
 |---src
     | PoseidonMRV.jl
     |---atm_properties
