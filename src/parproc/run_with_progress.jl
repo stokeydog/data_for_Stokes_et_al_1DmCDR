@@ -1,15 +1,16 @@
 using ProgressMeter
-# using Distributed
 using Dates  # For more flexible time tracking
 
-# include(joinpath(@__DIR__, "run_CN_1D_parallel.jl"))
-
-function run_with_progress(diffusivity::Float64, progress_channel::Channel{Int})
+function run_with_progress(diffusivity::Float64, progress_channel::Channel{Int}, buffering_flag::Bool)
     start_time = now()  # Record the start time
 
-    # Run the actual simulation task and get the result
-    result = PoseidonMRV.ParProc.run_CN_1D_parallel(diffusivity)
-    
+    # Select the appropriate simulation function based on buffering_flag
+    if buffering_flag
+        result = PoseidonMRV.ParProc.run_CN_1D_parallel(diffusivity)  # With buffering
+    else
+        result = PoseidonMRV.ParProc.run_CN_1D_parallel_no_buffering(diffusivity)  # Without buffering
+    end
+
     elapsed_time = now() - start_time  # Calculate the elapsed time
     println("Worker $(myid()): Task for diffusivity $diffusivity took $(elapsed_time) seconds.")
     

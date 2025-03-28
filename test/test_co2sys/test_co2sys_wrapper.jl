@@ -32,20 +32,20 @@ end
 # Define sample parameters
 kwargs = Dict(
     :par1_type => 1,
-    :par1 => 2400,
-    :par2_type => 3,
-    :par2 => 7.8,
+    :par1 => 2300,
+    :par2_type => 2,
+    :par2 => 2050,
     :salinity => 35,
-    :temperature => 25,
-    :temperature_out => 2,
+    :temperature => 15,
+    :temperature_out => 15,
     :pressure => 0,
-    :pressure_out => 4000,
-    :total_silicate => 50,
-    :total_phosphate => 2,
+    :pressure_out => 0,
+    :total_silicate => 5,
+    :total_phosphate => 0.5,
     :opt_pH_scale => 1,
-    :opt_k_carbonic => 4,
-    :opt_k_bisulfate => 1,
-    :opt_total_borate => 1
+    :opt_k_carbonic => 10,
+    :opt_k_fluoride => 2,
+    :opt_total_borate => 2
 )
 
 # Call the Python CO2SYS function
@@ -60,9 +60,9 @@ end
 println("\nPerforming minimal test call:")
 test_kwargs = Dict(
     :par1_type => 1,
-    :par1 => 2400,
-    :par2_type => 3,
-    :par2 => 7.8
+    :par1 => 2300,
+    :par2_type => 2,
+    :par2 => 2050
 )
 
 if co2sys_module !== nothing

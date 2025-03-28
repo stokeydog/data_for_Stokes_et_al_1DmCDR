@@ -12,7 +12,7 @@ function calc_additionality(
 
     # calculate additionality
     additionality = calc_drawdown_from_dic_1D(DIC, rho_matrix, grid)  # mol m⁻²
-
+    
     return DIC, additionality
 
 end

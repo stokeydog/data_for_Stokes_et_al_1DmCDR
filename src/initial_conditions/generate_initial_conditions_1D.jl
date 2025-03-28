@@ -11,9 +11,7 @@ function generate_initial_conditions_1D(
     ocn_props_config::Dict{Any, Any};
     case::String = "unperturbed"
 )::InitialConditions1D
-    # Obtain the total number of elements
-    # nz = Int(depth_grid_config["max_depth"] / depth_grid_config["dz"] + 1)
-    # z = range(0, depth_grid_config["max_depth"], length = nz)
+
     # Extract grid properties
     z = grid.z
     nz = grid.nz
@@ -25,14 +23,13 @@ function generate_initial_conditions_1D(
     if case == "unperturbed"
         # Return unperturbed initial conditions
         return InitialConditions1D(alk0, dic0)
+
     elseif case == "surface_step"
         # Surface step perturbation
-        # n_perturbed = Int(pert_props["perturbed_layer_thickness"] / depth_grid_config["dz"])
-        # alk0[(end - n_perturbed + 1):end] .= pert_props["alk_pert"]
-        # dic0[(end - n_perturbed + 1):end] .= pert_props["dic_pert"]
         indices = findall((z .<= pert_props["perturbed_layer_thickness"]) .& (z .>= 0))
         alk0[indices] .= pert_props["alk_pert"]
         dic0[indices] .= pert_props["dic_pert"]
+
     elseif case == "depth_step"
         # Step perturbation at specified depth
         depth_start = pert_props["perturbation_depth_start"]
@@ -40,6 +37,7 @@ function generate_initial_conditions_1D(
         indices = findall((z .>= depth_start) .& (z .<= depth_end))
         alk0[indices] .= pert_props["alk_pert"]
         dic0[indices] .= pert_props["dic_pert"]
+
     elseif case == "gaussian"
         # Gaussian perturbation centered at specified depth
         depth_center = pert_props["perturbation_depth_center"]
@@ -49,8 +47,10 @@ function generate_initial_conditions_1D(
         # Scale perturbation amplitude
         alk0 .= alk0 .+ pert_props["alk_pert"] * gaussian_profile
         dic0 .= dic0 .+ pert_props["dic_pert"] * gaussian_profile
+
     else
         error("Invalid case provided: $case")
+
     end
 
     return InitialConditions1D(alk0, dic0)

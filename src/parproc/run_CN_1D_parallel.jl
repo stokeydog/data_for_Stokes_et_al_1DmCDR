@@ -150,6 +150,7 @@ function run_CN_1D_parallel(diffusivity::Float64)
             "DIC_p" => DIC_p,
             "pCO2_p" => pCO2_p,
             "pH_p" => pH_p,
+            "ΔpCO2_p" => ΔpCO2_p,
             "TI" => output_config.TI,
             "z" => grid.z,
             "additionality" => additionality,

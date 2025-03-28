@@ -2,8 +2,6 @@
 using Revise 
 
 # Script begins here:
-# using .Utils  # Importing Utilities module
-
 module CrankNicholson1D
 
 export timestep!
@@ -26,19 +24,6 @@ using PoseidonMRV.OutputConfig
 using PoseidonMRV.OcnProperties
 using PoseidonMRV.AtmProperties
 using PoseidonMRV.CO2SYS
-
-# # Import the Python CO2SYS wrapper
-# co2sys_module = pyimport("julia_wrappers.co2sys_wrapper")
-# # Check if import was successful
-# if co2sys_module === nothing
-#     error("Failed to import julia_wrappers.co2sys_wrapper")
-# end
-# # Check if 'co2sys' attribute exists
-# if hasproperty(co2sys_module, :co2sys)
-#     println("'co2sys' function exists in the module.")
-# else
-#     error("'co2sys' function does not exist in julia_wrappers.co2sys_wrapper.")
-# end
 
 function timestep!(
     initial_conditions::InitialConditions.InitialConditions1D,
@@ -160,7 +145,7 @@ function timestep!(
         
         # Calculate d(DIC)/dz to apply DIC flux 
         # recall F_DIC = kappa * d(DIC)/dz; F_DIC = F_pCO2 / rho; 
-        dDICdz = -F[ii - 1] / (kap_current[end] * rho) * 1e6 # multiply by 1e6 to convert atm to μatm
+        dDICdz = F[ii - 1] / (kap_current[end] * rho) * 1e6 # multiply by 1e6 to convert atm to μatm
 
         # Update RHS of matricies and apply DIC flux
         RHS_alk = RHS * alk0

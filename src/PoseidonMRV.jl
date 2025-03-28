@@ -106,6 +106,10 @@ include("models/CrankNicholson1D.jl")
 using .CrankNicholson1D
 println("CrankNicholson1D uploaded successfully")
 
+include("models/CrankNicholsonNoBuffering1D.jl")
+using .CrankNicholsonNoBuffering1D
+println("CrankNicholsonNoBuffering1D uploaded successfully")
+
 include("visualization/Visualize.jl")
 using .Visualize
 println("Visualize uploaded successfully")

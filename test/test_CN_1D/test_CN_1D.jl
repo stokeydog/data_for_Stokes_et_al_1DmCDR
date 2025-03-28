@@ -44,7 +44,26 @@ ALK, DIC, pH, pCO2, ΔpCO2, F, tiF, rho_matrix, kg_m_per_s = PoseidonMRV.CrankNi
 )
 println("Crank-Nicholson Ran Successfully")
 
-# Add a visualization to make sure results arent garbage
-
 # Visualize results
-PoseidonMRV.Visualize.plot_results(ALK, DIC, pH, pCO2, ΔpCO2, F, tiF, grid.z, output_config.TI)
+# Initialize the figure with a two-panel layout
+plt = plot(layout=(3, 1),  # Two rows, one column
+    size=(800, 800),        # Adjust size for better visibility
+)
+
+# Plot Surface DIC in the top panel
+plot!(plt[1], TI / 86400, DIC[end,:], label=label_text,
+    xlabel="Time (days)", ylabel="DIC (μmol/kgSW)", title="Surface DIC over time",
+    linewidth=2, legend=:topleft)
+
+# Plot surface pCO2 in the middle panel
+plot!(plt[2], TI / 86400, pCO2[end,:], label=label_text,
+    xlabel="Time (days)", ylabel="pCO₂ (μatm)", title="Surface pCO₂ Over Time",
+    linewidth=2, legend=:topleft)
+
+# Plot ΔpCO2 in the bottom panel
+plot!(plt[2], TI / 86400, ΔpCO2, label=label_text,
+    xlabel="Time (days)", ylabel="pCO₂ (μatm)", title="Surface pCO₂ Over Time",
+    linewidth=2, legend=:topleft)    
+
+# Display the final two-panel plot
+display(plt)

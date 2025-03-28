@@ -4,7 +4,10 @@
 model: "CrankNicholson1D"
 
 # Model setup
-setup: "inf_ELD"
+setup: "inf_ELD_kg25mps_noBuffering"
+
+# buffering flag
+buffering_flag: false
 
 # Oceanographic Properties
 ocn_props:
@@ -17,7 +20,7 @@ ocn_props:
 # Atmospheric Properties
 atm_props:
   pCO2_air: 400.0 # [umol/kgSW]
-  u_10: 6.63 # [m/s]
+  u_10: 6.63 # [m/s] 6.63 is global mean
 
 # Vertical Grid
 depth_grid:
@@ -30,7 +33,7 @@ depth_grid:
 timestepping:
   # timestep: 1800 # [s]
   # sim_duration_days: 0.041666666666666664 # (1/24) # use float here
-  sim_duration_days: 30.0 # use float here
+  sim_duration_days: 1.0 # use float here
   save_interval_hours: 1 # use integer here
 
 # Perturbation Properties
@@ -54,3 +57,5 @@ co2sys_params:
   opt_k_bisulfate: 1      # Constants from Dickson (1990) KSO4
   opt_k_fluoride: 2       # Constants from Perez & Fraga (1987) KF
   opt_total_borate: 2     # Lee et al (2010) TB
+
+
