@@ -7,60 +7,52 @@ PoseidonMRV is a Julia-based tool designed to estimate carbon drawdown associate
 The package is organized to be modular and leverage Julia's native parallel processing capabilities.
 At the time of writing this README file, the folder structure is
 
-PoseidonMRV (but we'll be changing the name on Tom's request)
-
-|---active_development
-
-|---config
-
-|---examples
-
-|---python
-
-|---results
-
-|---src
-
-    | PoseidonMRV.jl
-
-    |---atm_properties
-
-    |       The AtmProperties module sets the atmospheric forcing. At present, this is pCO2_air and U_10
-
-    |---co2sys
-
-    |       The CO2SYS module invokes PyCall to run PyCO2SYS
-
-    |---drawdown_calculations
-
-    |       The CalcDrawdown module calculates additionality. At present, this runs the calculation using (1) depth-integrated DIC and (2) time-integrated flux. There's also a function to verify that these two methods are consistent. In the example scripts, this function triggers a warning if consistency does not meet specified thresholds
-
-    |---grids
-
-    |       The Grids module builds vertical grids. At present, its just a vertical z-grid with linear spacing. Future developments should include surface-enhanced grids, 2D grids, etc.
-
-    |---initial_conditions
-    |       Two modules live here, InitialConditions and LoadInitialConditions.
-    |       The idea of InitialConditions is set up vertical vectors based on user-defined inputs
-    |       Supported initializations are given in the function "generate_initial_conditions_1D.jl
-    |       The idea of LoadInitialConditions is to 
-    |---models
-    |---ocn_properties
-    |---output_config
-    |---parproc
-    |---timestepping
-    |---utils
-    |---visualization
-    
+    PoseidonMRV (but we'll be changing the name on Tom's request)
+    |---active_development
+    |---config
+    |---examples
+    |---python
+    |---results
+    |---src
+        | PoseidonMRV.jl
+        |---atm_properties
+        |       The AtmProperties module sets the atmospheric forcing 
+        |       At present, this is pCO2_air and U_10
+        |
+        |---co2sys
+        |       The CO2SYS module invokes PyCall to run PyCO2SYS
+        |
+        |---drawdown_calculations
+        |       The CalcDrawdown module calculates additionality
+        |       At present, this runs the calculation using (1) depth-integrated DIC and (2) time-integrated flux
+        |       There's also a function to verify that these two methods are consistent.
+        |       In the example scripts, this function triggers a warning if consistency does not meet specified thresholds
+        |
+        |---grids
+        |       The Grids module builds vertical grids
+        |       At present, its just a vertical z-grid with linear spacing
+        |       Future developments should include surface-enhanced grids, 2D grids, etc.
+        |
+        |---initial_conditions
+        |       Two modules live here, InitialConditions and LoadInitialConditions.
+        |       The idea of InitialConditions is set up vertical vectors based on user-defined inputs
+        |       Supported initializations are given in the function "generate_initial_conditions_1D.jl
+        |       The idea of LoadInitialConditions is to 
+        |---models
+        |---ocn_properties
+        |---output_config
+        |---parproc
+        |---timestepping
+        |---utils
+        |---visualization
+        
 ### Package Dependencies
 Prior to installation, make sure you have all the necessary packages. In order to avoid dependency hell, first delete the files "Project.toml" and "Manifest.toml". This ensures that your PyCall will access the virtual environment within PoseidonMRV. Run this command:
 
-rm("Project.toml")
-rm("Manifest.toml")
+    rm("Project.toml")
+    rm("Manifest.toml")
 
 ## Now begin your build.
-
-"""
 Note here: I think this step can be skipped with the current setup of the Package.
 I'm pretty sure building the package by issuing 
 using Pkg; Pkg.activate("."); Pkg.instantiate();
@@ -69,49 +61,46 @@ However, it is critical to build PyCall in your venv first!
 
 This is the command, but let's try not issuing it at this point.
 Leaving it here for archive purposes.
-"""
 
-using Pkg
-Pkg.add([
-    "GibbsSeaWater",    # Gibbs SeaWater Oceanographic Toolbox
-    "SparseArrays",     # for numerical calculations
-    "LinearAlgebra",    # for numerical calculations
-    "CSV",              # for data I/O
-    "DataFrames",       # for data I/O
-    "Makie",            # for visualization
-    "CairoMakie"        # for visualization
-    "JSON",             # Manage configuration files.
-    "TOML",             # Manage configuration files.
-    "YAML",             # Manage configuration files.
-    "JLD2",             # Advanced data storage.
-    "FileIO",           # Advanced data storage.
-    "Logging",          # Track simulation progress and errors.
-    "ArgParse",         # Handle command-line arguments.
-    "Test",             # Implement testing suites.
-    "ProgressMeter",    # Show the sim progress.
-    "Interpolations",   # Interpolate stuff
-    "Statistics",       # Statistical stuff
-    "Printf",           # Print output
-    "Dates"             # Time individual runs
-    ])
-    # there might be more... but skip this step for now
-
+    using Pkg
+    Pkg.add([
+        "GibbsSeaWater",    # Gibbs SeaWater Oceanographic Toolbox
+        "SparseArrays",     # for numerical calculations
+        "LinearAlgebra",    # for numerical calculations
+        "CSV",              # for data I/O
+        "DataFrames",       # for data I/O
+        "Makie",            # for visualization
+        "CairoMakie"        # for visualization
+        "JSON",             # Manage configuration files.
+        "TOML",             # Manage configuration files.
+        "YAML",             # Manage configuration files.
+        "JLD2",             # Advanced data storage.
+        "FileIO",           # Advanced data storage.
+        "Logging",          # Track simulation progress and errors.
+        "ArgParse",         # Handle command-line arguments.
+        "Test",             # Implement testing suites.
+        "ProgressMeter",    # Show the sim progress.
+        "Interpolations",   # Interpolate stuff
+        "Statistics",       # Statistical stuff
+        "Printf",           # Print output
+        "Dates"             # Time individual runs
+        ])
+        # there might be more... but skip this step for now
 
 ## SETTING UP JULIA TO ACCESS PyCO2SYS
 
 ### 1. CREATE A VIRTUAL ENVIRONMENT
 In the directory PoseidonMRV/python, create a virtual environment called "pyseidon". First, kill julia by issuing Ctrl + D (press control and D simultaneously), or just open a new terminal. Now change directory and create venv:
 
-cd "C:/Users/istok/Programming/Julia/PoseidonMRV/python" 
-python -m venv pyseidon
+    cd "C:/Users/istok/Programming/Julia/PoseidonMRV/python" 
+    python -m venv pyseidon
 
 activate your virtual environment:
-
-on windows: .\pyseidon\Scripts\activate 
+on windows: 
+    .\pyseidon\Scripts\activate 
 
 install the pyco2sys package using:
-
-pip install pyco2sys
+    pip install pyco2sys
 
 after installation, deactivate the pyseidon environment and change back to base directory: 
 
