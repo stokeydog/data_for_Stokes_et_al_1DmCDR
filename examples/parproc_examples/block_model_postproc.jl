@@ -123,7 +123,7 @@ for (i, alpha) in enumerate(alpha_values)
 
         A_mixed = A0 .* (1.0 .+ S_parsed) .^ alpha
         # H_mixed = H0 .* (1.0 .+ S_parsed) .^ (1.0 .- alpha)
-        local path_for_config = "results/inf_MLD_variable_dilution_doc_alpha_$(alpha)_fixed_Bic/results_dilution_$(S_parsed).jld2"
+        local path_for_config = "results/block_model/inf_MLD_variable_dilution_doc_alpha_$(alpha)_fixed_Bic/results_dilution_$(S_parsed).jld2"
         local data = JLD2.jldopen(path_for_config) do file
             read(file, "simulation_results")
         end

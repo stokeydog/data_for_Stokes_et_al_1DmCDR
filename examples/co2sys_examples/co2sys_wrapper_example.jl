@@ -34,12 +34,12 @@ end
 # Define sample parameters
 kwargs = Dict(
     :par1_type => 1,
-    :par1 => 1300,
-    :par2_type => 3,
-    :par2 => 9.965, 
-    :salinity => 35,
-    :temperature => 17.5,
-    :temperature_out => 17.5,
+    :par1 => 2300,
+    :par2_type => 2,
+    :par2 => 1050, 
+    :salinity => 35.0,
+    :temperature => 15.0,
+    :temperature_out => 15.0,
     :pressure => 0,
     :pressure_out => 0,
     :total_silicate => 5,
