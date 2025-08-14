@@ -4,7 +4,7 @@
 model: "CrankNicholson1D"
 
 # Model setup
-setup: "captura"
+setup: "doc"
 
 # Oceanographic Properties
 ocn_props:
