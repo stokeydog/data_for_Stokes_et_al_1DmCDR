@@ -4,40 +4,40 @@
 model: "CrankNicholson1D"
 
 # Model setup
-setup: "finite_MLD"
+setup: "captura"
 
 # Oceanographic Properties
 ocn_props:
-  vertical_diffusivity_ML: 1e-5 # [m^2/s]
+  vertical_diffusivity_ML: 1e-4 # [m^2/s]
   temperature: 15.0 # [C]
   salinity: 35.0 # [psu]
-  alk_sw: 2300.0 # [umol/kgSW]
-  dic_sw: 2050.0 # [umol/kgSW]
+  alk_sw: 2311.0 # [umol/kgSW]
+  dic_sw: 2181.0 # [umol/kgSW]
 
 # Atmospheric Properties
 atm_props:
-  pCO2_air: 400.0 # [umol/kgSW]
-  u_10: 6.63 # [m/s]
+  pCO2_air: 420.0 # [umol/kgSW]
+  u_10: 5.0 # [m/s]
 
 # Vertical Grid
 depth_grid:
-  max_depth: 100.0
-  dz: 1.0
+  max_depth: 10.0
+  dz: 0.250
 
 # Timstepping (for CrankNicholson use)
 # consider the CN stability criterion when setting timestep: 
 # dt_max = dz^2 / (2 * max_vertical_diffusivity)
 timestepping:
   timestep: 3600 # [s]
-  sim_duration_days: 10.0
+  sim_duration_days: 30.0
   save_interval_hours: 1
 
 # Perturbation Properties
 pert_props:
-  dilution: 100  # dilution factor [1]
-  alk_pert: 2300.0 # [umol/kgSW] use 2700 for perturbation, 2300 for baseline
-  dic_pert: 1050.0 # [umol/kgSW] use 1050 for perturbation, 2050 for baseline
-  perturbed_layer_thickness: 10.0  # general layer thickness [m]
+  dilution: 0  # dilution factor [1]
+  alk_pert: 2311.0 # [umol/kgSW] use 2700 for perturbation, 2300 for baseline
+  dic_pert: 2168.0 # [umol/kgSW] use 1050 for perturbation, 2050 for baseline
+  perturbed_layer_thickness: 1.5  # general layer thickness [m]
   perturbation_depth_start: 1.0 # deep layer runs from pert_depth_start to (pert_depth_start + pert_layer_thickness)[m]
   perturbation_depth_center: 2.0 # for the Gaussian perturbation [m]
   perturbation_width: 1.0 # for the Gaussian perturbation [m]

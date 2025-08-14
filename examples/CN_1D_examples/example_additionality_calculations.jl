@@ -6,6 +6,7 @@ using YAML
 using Plots
 using Printf
 using Profile, ProfileView
+using JLD2
 
 # Add PoseidonMRV module to the LOAD_PATH
 # Edit this to wherever you have the main package folder saved. Mine is:
@@ -13,7 +14,7 @@ push!(LOAD_PATH, "C:/Users/istok/Programming/Julia/PoseidonMRV/src")
 using PoseidonMRV
 
 # Load configuration
-config_file_path    = "examples/CN_1D_examples/examples_config_CN_1D.yaml"
+config_file_path    = "examples/CN_1D_examples/example_config_CN_1D.yaml"
 config              = PoseidonMRV.Utils.load_config(config_file_path)
 
 # Extract properties from configuration file
@@ -103,7 +104,7 @@ drawdown_flux_interp_p, drawdown_dic_p, drawdown_difference_p, drawdown_relative
 threshold = 1.0 # percent diff for error, e.g. if >1% difference, review the sim output
 
 # Report the threshold and maximum values of drawdown relative differences
-println("Threshold percent, perturbed case: ", threshold_p)
+println("Threshold percent, perturbed case: ", threshold)
 println("Max value of drawdown_relative_difference_up: ", PoseidonMRV.Utils.max_non_nan(drawdown_relative_difference_up))
 println("Max value of drawdown_relative_difference_p: ", PoseidonMRV.Utils.max_non_nan(drawdown_relative_difference_p))
 
@@ -130,7 +131,7 @@ end
 # Collect results into a dictionary
 simulation_results = Dict(
     "input" => Dict(
-        "diffusivity" => diffusivity,
+        # "diffusivity" => diffusivity,
         "config" => config
     ),   
     "output" => Dict(
@@ -159,7 +160,7 @@ formatted_diffusivity = replace(formatted_diffusivity, "-" => "minus")  # Replac
 formatted_dilution = string(pert_props["dilution"])  # Convert dilution ratio to string
 
 # Define output directory, including setup and efficiency case
-output_dir = "results/data/examples/CN_1D_examples/$(setup)_$(efficiency_case)/diffusivity_$(formatted_diffusivity)"
+output_dir = "results/data/for_ms/$(setup)_$(efficiency_case)/diffusivity_$(formatted_diffusivity)"
 mkpath(output_dir)  # Create the directory structure if it doesn't exist
 
 # Define output file path, including formatted dilution value

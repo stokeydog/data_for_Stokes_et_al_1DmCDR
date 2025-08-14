@@ -74,7 +74,7 @@ dilution_values = [0.0, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 10
 alpha_values = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
 
 # Time to calculate additionality/efficiency
-target_time_days = 10.0
+target_time_days = 30.0
 
 # Prepare data storage
 n_alpha     = length(alpha_values)
@@ -180,7 +180,7 @@ plt1 = plot(
 
 for (i, α) in enumerate(alpha_values)
     # Y-values = final_additionality for this alpha, all dilutions
-    yvals = final_additionality[i, :] ./ add_ref
+    yvals = final_additionality[i, :] #./ add_ref
     plot!(
         dilution_values_plot,
         yvals;
@@ -190,22 +190,22 @@ for (i, α) in enumerate(alpha_values)
         palette = p
     )
 end
-plot!([0.45,1400.0],[1,1];
-    lw = 3,
-    style = :dot,
-    color = :black,
-    label = nothing,
-    ylims = (0,3),
-    legend = :topleft
-)
+# plot!([0.45,1400.0],[1,1];
+#     lw = 3,
+#     style = :dot,
+#     color = :black,
+#     label = nothing,
+#     #ylims = (0,3),
+#     legend = :topleft
+# )
 
 # Extract the curves for α = 0.4 and α = 0.6.
 i_low = findfirst(==(0.4), alpha_values)
 i_high = findfirst(==(0.6), alpha_values)
 
 if i_low !== nothing && i_high !== nothing
-    y_low = final_additionality[i_low, :] ./ add_ref
-    y_high = final_additionality[i_high, :] ./ add_ref
+    y_low = final_additionality[i_low, :] #./ add_ref
+    y_high = final_additionality[i_high, :] #./ add_ref
 
     # Add shading between the two curves using fillrange.
     plot!(dilution_values_plot, y_low,
